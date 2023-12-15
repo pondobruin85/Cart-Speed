@@ -35,43 +35,40 @@ namespace Eco.Mods.TechTree
 
 
     [Serialized]
-    [LocDisplayName("Hand Plow")]
-    [LocDescription("A tool that tills the field for farming.")]
+    [LocDisplayName("Wheelbarrow")]
+    [LocDescription("Small wheelbarrow for hauling minimal loads.")]
     [IconGroup("World Object Minimap")]
     [Weight(5000)]
     [Ecopedia("Crafted Objects", "Vehicles", createAsSubPage: true)]
-    public partial class HandPlowItem : WorldObjectItem<HandPlowObject>, IPersistentData
+    public partial class WheelbarrowItem : WorldObjectItem<WheelbarrowObject>, IPersistentData
     {
         [Serialized, SyncToView, NewTooltipChildren(CacheAs.Instance, flags: TTFlags.AllowNonControllerTypeForChildren)] public object PersistentData { get; set; }
     }
 
     /// <summary>
-    /// <para>Server side recipe definition for "HandPlow".</para>
+    /// <para>Server side recipe definition for "Wheelbarrow".</para>
     /// <para>More information about RecipeFamily objects can be found at https://docs.play.eco/api/server/eco.gameplay/Eco.Gameplay.Items.RecipeFamily.html</para>
     /// </summary>
     /// <remarks>
     /// This is an auto-generated class. Don't modify it! All your changes will be wiped with next update! Use Mods* partial methods instead for customization. 
     /// If you wish to modify this class, please create a new partial class or follow the instructions in the "UserCode" folder to override the entire file.
     /// </remarks>
-    [RequiresSkill(typeof(BasicEngineeringSkill), 2)]
-    [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Hand Plow Item")]
-    public partial class HandPlowRecipe : RecipeFamily
+    [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Wheelbarrow Item")]
+    public partial class WheelbarrowRecipe : RecipeFamily
     {
-        public HandPlowRecipe()
+        public WheelbarrowRecipe()
         {
             var recipe = new Recipe();
             recipe.Init(
-                name: "HandPlow",  //noloc
-                displayName: Localizer.DoStr("Hand Plow"),
+                name: "Wheelbarrow",  //noloc
+                displayName: Localizer.DoStr("Wheelbarrow"),
 
                 // Defines the ingredients needed to craft this recipe. An ingredient items takes the following inputs
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(IronBarItem), 10, typeof(BasicEngineeringSkill)),
-                    new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement("WoodBoard", 50, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement(typeof(WoodenWheelItem), 1, true),
+                    new IngredientElement("HewnLog", 2), //noloc
+                    new IngredientElement("WoodBoard", 4), //noloc
                 },
 
                 // Define our recipe output items.
@@ -79,24 +76,23 @@ namespace Eco.Mods.TechTree
                 // to create.
                 items: new List<CraftingElement>
                 {
-                    new CraftingElement<HandPlowItem>()
+                    new CraftingElement<WheelbarrowItem>()
                 });
             this.Recipes = new List<Recipe> { recipe };
-            this.ExperienceOnCraft = 10; // Defines how much experience is gained when crafted.
             
             // Defines the amount of labor required and the required skill to add labor
-            this.LaborInCalories = CreateLaborInCaloriesValue(100, typeof(BasicEngineeringSkill));
+            this.LaborInCalories = CreateLaborInCaloriesValue(75);
 
             // Defines our crafting time for the recipe
-            this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(HandPlowRecipe), start: 2, skillType: typeof(BasicEngineeringSkill));
+            this.CraftMinutes = CreateCraftTimeValue(2);
 
-            // Perform pre/post initialization for user mods and initialize our recipe instance with the display name "Hand Plow"
+            // Perform pre/post initialization for user mods and initialize our recipe instance with the display name "Wheelbarrow"
             this.ModsPreInitialize();
-            this.Initialize(displayText: Localizer.DoStr("Hand Plow"), recipeType: typeof(HandPlowRecipe));
+            this.Initialize(displayText: Localizer.DoStr("Wheelbarrow"), recipeType: typeof(WheelbarrowRecipe));
             this.ModsPostInitialize();
 
             // Register our RecipeFamily instance with the crafting system so it can be crafted.
-            CraftingComponent.AddRecipe(tableType: typeof(WainwrightTableObject), recipe: this);
+            CraftingComponent.AddRecipe(tableType: typeof(WorkbenchObject), recipe: this);
         }
 
         /// <summary>Hook for mods to customize RecipeFamily before initialization. You can change recipes, xp, labor, time here.</summary>
@@ -108,25 +104,31 @@ namespace Eco.Mods.TechTree
 
     [Serialized]
     [RequireComponent(typeof(StandaloneAuthComponent))]
+    [RequireComponent(typeof(PublicStorageComponent))]
+    [RequireComponent(typeof(TailingsReportComponent))]
+    [RequireComponent(typeof(MovableLinkComponent))]
     [RequireComponent(typeof(VehicleComponent))]
+    [RequireComponent(typeof(CustomTextComponent))]
     [RequireComponent(typeof(MinimapComponent))]           
-    [Ecopedia("Crafted Objects", "Vehicles", subPageName: "HandPlow Item")]
-    public partial class HandPlowObject : PhysicsWorldObject, IRepresentsItem
+    [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Wheelbarrow Item")]
+    public partial class WheelbarrowObject : PhysicsWorldObject, IRepresentsItem
     {
-        static HandPlowObject()
+        static WheelbarrowObject()
         {
-            WorldObject.AddOccupancy<HandPlowObject>(new List<BlockOccupancy>(0));
+            WorldObject.AddOccupancy<WheelbarrowObject>(new List<BlockOccupancy>(0));
         }
         public override TableTextureMode TableTexture => TableTextureMode.Wood;
         public override bool PlacesBlocks            => false;
-        public override LocString DisplayName { get { return Localizer.DoStr("Hand Plow"); } }
-        public Type RepresentedItemType { get { return typeof(HandPlowItem); } }
+        public override LocString DisplayName { get { return Localizer.DoStr("Wheelbarrow"); } }
+        public Type RepresentedItemType { get { return typeof(WheelbarrowItem); } }
 
-        private HandPlowObject() { }
+        private WheelbarrowObject() { }
         protected override void Initialize()
         {
             base.Initialize();         
-            this.GetComponent<VehicleComponent>().HumanPowered(1.5f);
+            this.GetComponent<CustomTextComponent>().Initialize(200);
+            this.GetComponent<VehicleComponent>().HumanPowered(1);
+            this.GetComponent<PublicStorageComponent>().Initialize(8, 1400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
             this.GetComponent<VehicleComponent>().Initialize(10, 1,1);

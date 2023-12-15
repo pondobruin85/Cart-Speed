@@ -33,6 +33,7 @@ namespace Eco.Mods.TechTree
     using Eco.Gameplay.Items.Recipes;
     using CartSpeed;
 
+
     [Serialized]
     [LocDisplayName("Wood Shop Cart")]
     [LocDescription("A store in a wooden cart, very useful when your customers are far away.")]
@@ -52,7 +53,7 @@ namespace Eco.Mods.TechTree
     /// This is an auto-generated class. Don't modify it! All your changes will be wiped with next update! Use Mods* partial methods instead for customization. 
     /// If you wish to modify this class, please create a new partial class or follow the instructions in the "UserCode" folder to override the entire file.
     /// </remarks>
-    [RequiresSkill(typeof(BasicEngineeringSkill), 2)]
+    [RequiresSkill(typeof(BasicEngineeringSkill), 1)]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Wood Shop Cart Item")]
     public partial class WoodShopCartRecipe : RecipeFamily
     {
@@ -142,7 +143,7 @@ namespace Eco.Mods.TechTree
         }
         void ChangeSpeed()
         {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 0.8f);
+            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
         }
     }
 }

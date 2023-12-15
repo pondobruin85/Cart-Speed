@@ -56,7 +56,7 @@ namespace CartSpeed
                 case TailorShoesItem:           return 17;
                 case ChefShoesItem:             return 17;
                 case ShipwrightSandalsItem:     return 17;  //top speed
-                default:                        return 1;
+                default:                        return 4;
             }
         }
         public static void ChangeCartSpeed(VehicleComponent vehicle, float baseCartSpeed)

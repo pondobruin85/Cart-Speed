@@ -31,8 +31,8 @@ namespace Eco.Mods.TechTree
 	using Eco.Gameplay.Components.Storage;
     using Eco.Core.Utils;
     using Eco.Gameplay.Items.Recipes;
+    using Eco.ModKit.Internal;
     using CartSpeed;
-
 
     [Serialized]
     [LocDisplayName("Small Wood Cart")]
@@ -53,7 +53,7 @@ namespace Eco.Mods.TechTree
     /// This is an auto-generated class. Don't modify it! All your changes will be wiped with next update! Use Mods* partial methods instead for customization. 
     /// If you wish to modify this class, please create a new partial class or follow the instructions in the "UserCode" folder to override the entire file.
     /// </remarks>
-    [RequiresSkill(typeof(LoggingSkill), 1)]
+    [RequiresSkill(typeof(CarpentrySkill), 1)]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Small Wood Cart Item")]
     public partial class SmallWoodCartRecipe : RecipeFamily
     {
@@ -68,8 +68,8 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("HewnLog", 10, typeof(LoggingSkill)), //noloc
-                    new IngredientElement("WoodBoard", 15, typeof(LoggingSkill)), //noloc
+                    new IngredientElement("HewnLog", 4, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
+                    new IngredientElement("WoodBoard", 8, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
                 },
 
                 // Define our recipe output items.
@@ -83,10 +83,10 @@ namespace Eco.Mods.TechTree
             this.ExperienceOnCraft = 3; // Defines how much experience is gained when crafted.
             
             // Defines the amount of labor required and the required skill to add labor
-            this.LaborInCalories = CreateLaborInCaloriesValue(50, typeof(LoggingSkill));
+            this.LaborInCalories = CreateLaborInCaloriesValue(50, typeof(CarpentrySkill));
 
             // Defines our crafting time for the recipe
-            this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(SmallWoodCartRecipe), start: 2, skillType: typeof(LoggingSkill));
+            this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(SmallWoodCartRecipe), start: 2, skillType: typeof(CarpentrySkill));
 
             // Perform pre/post initialization for user mods and initialize our recipe instance with the display name "Small Wood Cart"
             this.ModsPreInitialize();
@@ -94,7 +94,7 @@ namespace Eco.Mods.TechTree
             this.ModsPostInitialize();
 
             // Register our RecipeFamily instance with the crafting system so it can be crafted.
-            CraftingComponent.AddRecipe(tableType: typeof(WorkbenchObject), recipe: this);
+            CraftingComponent.AddRecipe(tableType: typeof(CarpentryTableObject), recipe: this);
         }
 
         /// <summary>Hook for mods to customize RecipeFamily before initialization. You can change recipes, xp, labor, time here.</summary>
@@ -130,10 +130,10 @@ namespace Eco.Mods.TechTree
             base.Initialize();         
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(1);
-            this.GetComponent<PublicStorageComponent>().Initialize(8, 1400000);
+            this.GetComponent<PublicStorageComponent>().Initialize(6, 1400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
+            this.GetComponent<VehicleComponent>().Initialize(6, 1, 1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
         }

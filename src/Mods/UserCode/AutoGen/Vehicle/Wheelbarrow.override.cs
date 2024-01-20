@@ -33,7 +33,6 @@ namespace Eco.Mods.TechTree
     using Eco.Gameplay.Items.Recipes;
     using CartSpeed;
 
-
     [Serialized]
     [LocDisplayName("Wheelbarrow")]
     [LocDescription("Small wheelbarrow for hauling minimal loads.")]
@@ -56,19 +55,20 @@ namespace Eco.Mods.TechTree
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Wheelbarrow Item")]
     public partial class WheelbarrowRecipe : RecipeFamily
     {
-        public WheelbarrowRecipe()
+      public WheelbarrowRecipe()
         {
             var recipe = new Recipe();
             recipe.Init(
                 name: "Wheelbarrow",  //noloc
                 displayName: Localizer.DoStr("Wheelbarrow"),
 
-                // Defines the ingredients needed to craft this recipe. An ingredient items takes the following inputs
-                // type of the item, the amount of the item, the skill required, and the talent used.
-                ingredients: new List<IngredientElement>
+               // Defines the ingredients needed to craft this recipe. An ingredient items takes the following inputs
+               // type of the item, the amount of the item, the skill required, and the talent used.
+               ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("HewnLog", 2), //noloc
-                    new IngredientElement("WoodBoard", 4), //noloc
+                    new IngredientElement(typeof(MortarItem), 4), //noloc
+                    new IngredientElement("Wood", 10), //noloc
+                    new IngredientElement(typeof(PlantFibersItem), 10),
                 },
 
                 // Define our recipe output items.
@@ -94,6 +94,7 @@ namespace Eco.Mods.TechTree
             // Register our RecipeFamily instance with the crafting system so it can be crafted.
             CraftingComponent.AddRecipe(tableType: typeof(WorkbenchObject), recipe: this);
         }
+    */
 
         /// <summary>Hook for mods to customize RecipeFamily before initialization. You can change recipes, xp, labor, time here.</summary>
         partial void ModsPreInitialize();
@@ -128,7 +129,7 @@ namespace Eco.Mods.TechTree
             base.Initialize();         
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(1);
-            this.GetComponent<PublicStorageComponent>().Initialize(8, 1400000);
+            this.GetComponent<PublicStorageComponent>().Initialize(3, 400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
             this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
@@ -137,7 +138,7 @@ namespace Eco.Mods.TechTree
         }
         void ChangeSpeed()
         {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
+            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.5f);
         }
     }
 }

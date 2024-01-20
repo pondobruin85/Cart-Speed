@@ -33,7 +33,6 @@ namespace Eco.Mods.TechTree
     using Eco.Gameplay.Items.Recipes;
     using CartSpeed;
 
-
     [Serialized]
     [LocDisplayName("Wood Cart")]
     [LocDescription("Small cart for hauling small loads.")]
@@ -68,8 +67,8 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("HewnLog", 4, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement("WoodBoard", 8, typeof(BasicEngineeringSkill)), //noloc
+                    new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill)), //noloc
+                    new IngredientElement("WoodBoard", 15, typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement(typeof(WoodenWheelItem), 2, true),
                 },
 
@@ -139,7 +138,7 @@ namespace Eco.Mods.TechTree
             this.GetComponent<VehicleComponent>().Initialize(12, 1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
-        }
+        }     
         void ChangeSpeed()
         {
             CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);

@@ -68,8 +68,6 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(CottonFabricItem), 12, typeof(BasicEngineeringSkill)),
-                    new IngredientElement("Lumber", 8, typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement(typeof(WoodCartItem), 1, true),
                     new IngredientElement(typeof(StoreItem), 1, true),
                 },

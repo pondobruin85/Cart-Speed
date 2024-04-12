@@ -66,9 +66,9 @@ namespace Eco.Mods.TechTree
                // type of the item, the amount of the item, the skill required, and the talent used.
                ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(MortarItem), 4), //noloc
-                    new IngredientElement("Wood", 10), //noloc
-                    new IngredientElement(typeof(PlantFibersItem), 10),
+                    new IngredientElement(typeof(MortarItem), 4,typeof(Skill)), //noloc
+                    new IngredientElement("Wood", 10,typeof(Skill)), //noloc
+                    new IngredientElement(typeof(PlantFibersItem), 10,typeof(Skill)),
                 },
 
                 // Define our recipe output items.
@@ -104,6 +104,7 @@ namespace Eco.Mods.TechTree
 
     [Serialized]
     [RequireComponent(typeof(StandaloneAuthComponent))]
+    [RequireComponent(typeof(PaintableComponent))]
     [RequireComponent(typeof(PublicStorageComponent))]
     [RequireComponent(typeof(TailingsReportComponent))]
     [RequireComponent(typeof(MovableLinkComponent))]

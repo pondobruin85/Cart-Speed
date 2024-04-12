@@ -69,7 +69,7 @@ namespace Eco.Mods.TechTree
                 {
                     new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement("WoodBoard", 15, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement(typeof(WoodenWheelItem), 2, true),
+                    new IngredientElement(typeof(IronWheelItem), 2, true),
                 },
 
                 // Define our recipe output items.

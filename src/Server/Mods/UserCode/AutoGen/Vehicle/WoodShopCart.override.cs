@@ -33,7 +33,6 @@ namespace Eco.Mods.TechTree
     using Eco.Gameplay.Items.Recipes;
     using CartSpeed;
 
-
     [Serialized]
     [LocDisplayName("Wood Shop Cart")]
     [LocDescription("A store in a wooden cart, very useful when your customers are far away.")]
@@ -67,9 +66,10 @@ namespace Eco.Mods.TechTree
                 // Defines the ingredients needed to craft this recipe. An ingredient items takes the following inputs
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
-                {
+                {                    
                     new IngredientElement(typeof(WoodCartItem), 1, true),
                     new IngredientElement(typeof(StoreItem), 1, true),
+                    new IngredientElement("Fabric", 6, typeof(BasicEngineeringSkill)),
                 },
 
                 // Define our recipe output items.
@@ -106,6 +106,7 @@ namespace Eco.Mods.TechTree
 
     [Serialized]
     [RequireComponent(typeof(StandaloneAuthComponent))]
+    [RequireComponent(typeof(PaintableComponent))]
     [RequireComponent(typeof(PublicStorageComponent))]
     [RequireComponent(typeof(TailingsReportComponent))]
     [RequireComponent(typeof(MovableLinkComponent))]

@@ -33,7 +33,6 @@ namespace Eco.Mods.TechTree
     using Eco.Gameplay.Items.Recipes;
     using CartSpeed;
 
-
     [Serialized]
     [LocDisplayName("Hand Plow")]
     [LocDescription("A tool that tills the field for farming.")]
@@ -68,10 +67,10 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(IronBarItem), 10, typeof(BasicEngineeringSkill)),
+                    new IngredientElement(typeof(IronBarItem), 5, typeof(BasicEngineeringSkill)),
                     new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement("WoodBoard", 50, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement(typeof(WoodenWheelItem), 1, true),
+                    new IngredientElement("WoodBoard", 15, typeof(BasicEngineeringSkill)), //noloc
+                    new IngredientElement(typeof(IronWheelItem), 1, true),
                 },
 
                 // Define our recipe output items.
@@ -108,6 +107,7 @@ namespace Eco.Mods.TechTree
 
     [Serialized]
     [RequireComponent(typeof(StandaloneAuthComponent))]
+    [RequireComponent(typeof(PaintableComponent))]
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(MinimapComponent))]           
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "HandPlow Item")]

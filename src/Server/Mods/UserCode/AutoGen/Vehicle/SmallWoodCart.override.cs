@@ -31,7 +31,6 @@ namespace Eco.Mods.TechTree
 	using Eco.Gameplay.Components.Storage;
     using Eco.Core.Utils;
     using Eco.Gameplay.Items.Recipes;
-    using Eco.ModKit.Internal;
     using CartSpeed;
 
     [Serialized]
@@ -70,6 +69,7 @@ namespace Eco.Mods.TechTree
                 {
                     new IngredientElement("HewnLog", 4, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
                     new IngredientElement("WoodBoard", 8, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
+                    new IngredientElement(typeof(WoodenWheelItem), 2, true),
                 },
 
                 // Define our recipe output items.
@@ -106,6 +106,7 @@ namespace Eco.Mods.TechTree
 
     [Serialized]
     [RequireComponent(typeof(StandaloneAuthComponent))]
+    [RequireComponent(typeof(PaintableComponent))]
     [RequireComponent(typeof(PublicStorageComponent))]
     [RequireComponent(typeof(TailingsReportComponent))]
     [RequireComponent(typeof(MovableLinkComponent))]

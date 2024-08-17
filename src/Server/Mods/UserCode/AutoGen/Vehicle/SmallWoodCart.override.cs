@@ -31,6 +31,7 @@ namespace Eco.Mods.TechTree
 	using Eco.Gameplay.Components.Storage;
     using Eco.Core.Utils;
     using Eco.Gameplay.Items.Recipes;
+    using Eco.Gameplay.Systems.Exhaustion;
     using CartSpeed;
 
     [Serialized]
@@ -128,6 +129,7 @@ namespace Eco.Mods.TechTree
         private SmallWoodCartObject() { }
         protected override void Initialize()
         {
+            this.ModsPreInitialize();
             base.Initialize();         
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(1);
@@ -137,10 +139,16 @@ namespace Eco.Mods.TechTree
             this.GetComponent<VehicleComponent>().Initialize(6, 1, 1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
+            this.ModsPostInitialize();
         }
         void ChangeSpeed()
         {
             CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
         }
+
+        /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>
+        partial void ModsPreInitialize();
+        /// <summary>Hook for mods to customize after initialization.</summary>
+        partial void ModsPostInitialize();
     }
 }

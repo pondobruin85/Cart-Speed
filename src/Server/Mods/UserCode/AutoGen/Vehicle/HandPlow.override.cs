@@ -31,6 +31,7 @@ namespace Eco.Mods.TechTree
 	using Eco.Gameplay.Components.Storage;
     using Eco.Core.Utils;
     using Eco.Gameplay.Items.Recipes;
+    using Eco.Gameplay.Systems.Exhaustion;
     using CartSpeed;
 
     [Serialized]
@@ -38,6 +39,7 @@ namespace Eco.Mods.TechTree
     [LocDescription("A tool that tills the field for farming.")]
     [IconGroup("World Object Minimap")]
     [Weight(5000)]
+    [Hoer]
     [Ecopedia("Crafted Objects", "Vehicles", createAsSubPage: true)]
     public partial class HandPlowItem : WorldObjectItem<HandPlowObject>, IPersistentData
     {
@@ -71,6 +73,7 @@ namespace Eco.Mods.TechTree
                     new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement("WoodBoard", 15, typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement(typeof(IronWheelItem), 1, true),
+                    new IngredientElement(typeof(LubricantItem), 1, true),
                 },
 
                 // Define our recipe output items.
@@ -109,7 +112,8 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(StandaloneAuthComponent))]
     [RequireComponent(typeof(PaintableComponent))]
     [RequireComponent(typeof(VehicleComponent))]
-    [RequireComponent(typeof(MinimapComponent))]           
+    [RequireComponent(typeof(MinimapComponent))]
+    [ExhaustableUnlessOverridenVehicle]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "HandPlow Item")]
     public partial class HandPlowObject : PhysicsWorldObject, IRepresentsItem
     {
@@ -125,6 +129,7 @@ namespace Eco.Mods.TechTree
         private HandPlowObject() { }
         protected override void Initialize()
         {
+            this.ModsPreInitialize();
             base.Initialize();         
             this.GetComponent<VehicleComponent>().HumanPowered(1.5f);
             this.GetComponent<MinimapComponent>().InitAsMovable();
@@ -132,10 +137,16 @@ namespace Eco.Mods.TechTree
             this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
+            this.ModsPostInitialize();
         }
         void ChangeSpeed()
         {
             CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
         }
+
+        /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>
+        partial void ModsPreInitialize();
+        /// <summary>Hook for mods to customize after initialization.</summary>
+        partial void ModsPostInitialize();
     }
 }

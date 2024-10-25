@@ -7,18 +7,24 @@ namespace Eco.Mods.TechTree
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using Eco.Core.Controller;
     using Eco.Core.Items;
+    using Eco.Core.Utils;
     using Eco.Gameplay.Components;
     using Eco.Gameplay.Components.Auth;
+    using Eco.Gameplay.Components.Storage;
     using Eco.Gameplay.Components.VehicleModules;
     using Eco.Gameplay.GameActions;
     using Eco.Gameplay.DynamicValues;
     using Eco.Gameplay.Interactions;
     using Eco.Gameplay.Items;
-    using Eco.Gameplay.Objects;
-    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Items.Recipes;
     using Eco.Gameplay.Players;
     using Eco.Gameplay.Skills;
+    using Eco.Gameplay.Objects;
+    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Systems.Exhaustion;
+    using Eco.Gameplay.Systems.NewTooltip;
     using Eco.Gameplay.Systems.TextLinks;
     using Eco.Shared.Math;
     using Eco.Shared.Networking;
@@ -26,13 +32,9 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using Eco.Gameplay.Systems.NewTooltip;
-    using Eco.Core.Controller;
-	using Eco.Gameplay.Components.Storage;
-    using Eco.Core.Utils;
-    using Eco.Gameplay.Items.Recipes;
-    using Eco.Gameplay.Systems.Exhaustion;
     using CartSpeed;
+    using Eco.Shared.Logging;
+    using Eco.ModKit.Internal;
 
     [Serialized]
     [LocDisplayName("Wheelbarrow")]
@@ -67,8 +69,9 @@ namespace Eco.Mods.TechTree
                // type of the item, the amount of the item, the skill required, and the talent used.
                ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(MortarItem), 4,typeof(Skill)), //noloc
-                    new IngredientElement("Wood", 10,typeof(Skill)), //noloc
+                    new IngredientElement(typeof(MortarItem), 3,typeof(Skill)), //noloc
+                    new IngredientElement("Wood", 5,typeof(Skill)), //noloc
+                    new IngredientElement("Rock", 5,typeof(Skill)), //noloc
                     new IngredientElement(typeof(PlantFibersItem), 10,typeof(Skill)),
                 },
 
@@ -111,6 +114,7 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(MovableLinkComponent))]
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(CustomTextComponent))]
+    [RequireComponent(typeof(ModularStockpileComponent))]
     [RequireComponent(typeof(MinimapComponent))]           
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Wheelbarrow Item")]
     public partial class WheelbarrowObject : PhysicsWorldObject, IRepresentsItem
@@ -127,21 +131,18 @@ namespace Eco.Mods.TechTree
         private WheelbarrowObject() { }
         protected override void Initialize()
         {
+            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.ModsPreInitialize();
-            base.Initialize();         
+            base.Initialize();
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(1);
+            this.GetComponent<StockpileComponent>().Initialize(new Vector3i(1,1,1));
             this.GetComponent<PublicStorageComponent>().Initialize(3, 400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
-            this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
-            this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
-            this.ModsPostInitialize();
-        }
-        void ChangeSpeed()
-        {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.5f);
+            this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
+            this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");   
+            this.ModsPostInitialize();    
         }
 
         /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>

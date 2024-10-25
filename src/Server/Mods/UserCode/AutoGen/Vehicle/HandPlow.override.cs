@@ -7,18 +7,24 @@ namespace Eco.Mods.TechTree
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using Eco.Core.Controller;
     using Eco.Core.Items;
+    using Eco.Core.Utils;
     using Eco.Gameplay.Components;
     using Eco.Gameplay.Components.Auth;
+    using Eco.Gameplay.Components.Storage;
     using Eco.Gameplay.Components.VehicleModules;
     using Eco.Gameplay.GameActions;
     using Eco.Gameplay.DynamicValues;
     using Eco.Gameplay.Interactions;
     using Eco.Gameplay.Items;
-    using Eco.Gameplay.Objects;
-    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Items.Recipes;
     using Eco.Gameplay.Players;
     using Eco.Gameplay.Skills;
+    using Eco.Gameplay.Objects;
+    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Systems.Exhaustion;
+    using Eco.Gameplay.Systems.NewTooltip;
     using Eco.Gameplay.Systems.TextLinks;
     using Eco.Shared.Math;
     using Eco.Shared.Networking;
@@ -26,12 +32,7 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using Eco.Gameplay.Systems.NewTooltip;
-    using Eco.Core.Controller;
-	using Eco.Gameplay.Components.Storage;
-    using Eco.Core.Utils;
-    using Eco.Gameplay.Items.Recipes;
-    using Eco.Gameplay.Systems.Exhaustion;
+    using static Eco.Gameplay.Components.PartsComponent;
     using CartSpeed;
 
     [Serialized]
@@ -69,10 +70,9 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(IronBarItem), 5, typeof(BasicEngineeringSkill)),
-                    new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement("WoodBoard", 15, typeof(BasicEngineeringSkill)), //noloc
-                    new IngredientElement(typeof(IronWheelItem), 1, true),
+                    new IngredientElement(typeof(IronBarItem), 2, typeof(BasicEngineeringSkill)),
+                    new IngredientElement("WoodBoard", 5, typeof(BasicEngineeringSkill)), //noloc
+                    new IngredientElement(typeof(IronWheelItem), 2, true),
                     new IngredientElement(typeof(LubricantItem), 1, true),
                 },
 
@@ -113,6 +113,8 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(PaintableComponent))]
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(MinimapComponent))]
+    [RequireComponent(typeof(PartsComponent))]
+    [RepairRequiresSkill(typeof(BasicEngineeringSkill), 2)]
     [ExhaustableUnlessOverridenVehicle]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "HandPlow Item")]
     public partial class HandPlowObject : PhysicsWorldObject, IRepresentsItem
@@ -129,19 +131,22 @@ namespace Eco.Mods.TechTree
         private HandPlowObject() { }
         protected override void Initialize()
         {
+            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.ModsPreInitialize();
-            base.Initialize();         
+            base.Initialize();
             this.GetComponent<VehicleComponent>().HumanPowered(1.5f);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
+            this.GetComponent<VehicleComponent>().Initialize(maxSpeed, 1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
-            this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
             this.ModsPostInitialize();
-        }
-        void ChangeSpeed()
-        {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
+            {
+                this.GetComponent<PartsComponent>().Config(() => LocString.Empty, new PartInfo[]
+                {
+                                        new() { TypeName = nameof(IronWheelItem), Quantity = 2},
+                                        new() { TypeName = nameof(LubricantItem), Quantity = 1},
+                });
+            }            
         }
 
         /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>

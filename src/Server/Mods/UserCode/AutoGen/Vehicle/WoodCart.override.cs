@@ -7,18 +7,24 @@ namespace Eco.Mods.TechTree
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using Eco.Core.Controller;
     using Eco.Core.Items;
+    using Eco.Core.Utils;
     using Eco.Gameplay.Components;
     using Eco.Gameplay.Components.Auth;
+    using Eco.Gameplay.Components.Storage;
     using Eco.Gameplay.Components.VehicleModules;
     using Eco.Gameplay.GameActions;
     using Eco.Gameplay.DynamicValues;
     using Eco.Gameplay.Interactions;
     using Eco.Gameplay.Items;
-    using Eco.Gameplay.Objects;
-    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Items.Recipes;
     using Eco.Gameplay.Players;
     using Eco.Gameplay.Skills;
+    using Eco.Gameplay.Objects;
+    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Systems.Exhaustion;
+    using Eco.Gameplay.Systems.NewTooltip;
     using Eco.Gameplay.Systems.TextLinks;
     using Eco.Shared.Math;
     using Eco.Shared.Networking;
@@ -26,12 +32,7 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using Eco.Gameplay.Systems.NewTooltip;
-    using Eco.Core.Controller;
-	using Eco.Gameplay.Components.Storage;
-    using Eco.Core.Utils;
-    using Eco.Gameplay.Items.Recipes;
-    using Eco.Gameplay.Systems.Exhaustion;
+    using static Eco.Gameplay.Components.PartsComponent;
     using CartSpeed;
 
     [Serialized]
@@ -115,7 +116,9 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(CustomTextComponent))]
     [RequireComponent(typeof(ModularStockpileComponent))]
-    [RequireComponent(typeof(MinimapComponent))]           
+    [RequireComponent(typeof(MinimapComponent))]
+    [RequireComponent(typeof(PartsComponent))]
+    [RepairRequiresSkill(typeof(BasicEngineeringSkill), 1)]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "WoodCart Item")]
     public partial class WoodCartObject : PhysicsWorldObject, IRepresentsItem
     {
@@ -132,23 +135,26 @@ namespace Eco.Mods.TechTree
         protected override void Initialize()
         {
             this.ModsPreInitialize();
-            base.Initialize();         
+            base.Initialize();
+            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(2);
-            this.GetComponent<StockpileComponent>().Initialize(new Vector3i(2,1,2));
+            this.GetComponent<StockpileComponent>().Initialize(new Vector3i(2,2,3));
             this.GetComponent<PublicStorageComponent>().Initialize(12, 2100000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(12, 1,1);
+            this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
-            this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
             this.ModsPostInitialize();
+            {
+                this.GetComponent<PartsComponent>().Config(() => LocString.Empty, new PartInfo[]
+                {
+                                        new() { TypeName = nameof(IronWheelItem), Quantity = 2},
+                                        new() { TypeName = nameof(LubricantItem), Quantity = 1},
+                });
+            }
         }
-        void ChangeSpeed()
-        {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
-        }
-
+        
         /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>
         partial void ModsPreInitialize();
         /// <summary>Hook for mods to customize after initialization.</summary>

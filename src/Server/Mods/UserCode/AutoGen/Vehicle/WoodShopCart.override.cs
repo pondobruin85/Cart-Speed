@@ -7,18 +7,24 @@ namespace Eco.Mods.TechTree
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using Eco.Core.Controller;
     using Eco.Core.Items;
+    using Eco.Core.Utils;
     using Eco.Gameplay.Components;
     using Eco.Gameplay.Components.Auth;
+    using Eco.Gameplay.Components.Storage;
     using Eco.Gameplay.Components.VehicleModules;
     using Eco.Gameplay.GameActions;
     using Eco.Gameplay.DynamicValues;
     using Eco.Gameplay.Interactions;
     using Eco.Gameplay.Items;
-    using Eco.Gameplay.Objects;
-    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Items.Recipes;
     using Eco.Gameplay.Players;
     using Eco.Gameplay.Skills;
+    using Eco.Gameplay.Objects;
+    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Systems.Exhaustion;
+    using Eco.Gameplay.Systems.NewTooltip;
     using Eco.Gameplay.Systems.TextLinks;
     using Eco.Shared.Math;
     using Eco.Shared.Networking;
@@ -26,12 +32,7 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using Eco.Gameplay.Systems.NewTooltip;
-    using Eco.Core.Controller;
-	using Eco.Gameplay.Components.Storage;
-    using Eco.Core.Utils;
-    using Eco.Gameplay.Items.Recipes;
-    using Eco.Gameplay.Systems.Exhaustion;
+    using static Eco.Gameplay.Components.PartsComponent;
     using CartSpeed;
 
     [Serialized]
@@ -53,7 +54,6 @@ namespace Eco.Mods.TechTree
     /// This is an auto-generated class. Don't modify it! All your changes will be wiped with next update! Use Mods* partial methods instead for customization. 
     /// If you wish to modify this class, please create a new partial class or follow the instructions in the "UserCode" folder to override the entire file.
     /// </remarks>
-    [RequiresSkill(typeof(BasicEngineeringSkill), 1)]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "Wood Shop Cart Item")]
     public partial class WoodShopCartRecipe : RecipeFamily
     {
@@ -69,9 +69,7 @@ namespace Eco.Mods.TechTree
                 ingredients: new List<IngredientElement>
                 {                    
                     new IngredientElement(typeof(WoodCartItem), 1, true),
-                    new IngredientElement(typeof(StoreItem), 1, true),
-                    new IngredientElement("Fabric", 6, typeof(BasicEngineeringSkill)),
-                    new IngredientElement(typeof(LubricantItem), 1, true),
+                    new IngredientElement(typeof(StoreItem), 1, true),                   
                 },
 
                 // Define our recipe output items.
@@ -82,13 +80,11 @@ namespace Eco.Mods.TechTree
                     new CraftingElement<WoodShopCartItem>()
                 });
             this.Recipes = new List<Recipe> { recipe };
-            this.ExperienceOnCraft = 10; // Defines how much experience is gained when crafted.
-            
             // Defines the amount of labor required and the required skill to add labor
-            this.LaborInCalories = CreateLaborInCaloriesValue(225, typeof(BasicEngineeringSkill));
+            this.LaborInCalories = CreateLaborInCaloriesValue(200);
 
             // Defines our crafting time for the recipe
-            this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(WoodShopCartRecipe), start: 2, skillType: typeof(BasicEngineeringSkill));
+            this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(WoodShopCartRecipe), start: 2, skillType: typeof(Skill));
 
             // Perform pre/post initialization for user mods and initialize our recipe instance with the display name "Wood Shop Cart"
             this.ModsPreInitialize();
@@ -96,7 +92,7 @@ namespace Eco.Mods.TechTree
             this.ModsPostInitialize();
 
             // Register our RecipeFamily instance with the crafting system so it can be crafted.
-            CraftingComponent.AddRecipe(tableType: typeof(WainwrightTableObject), recipe: this);
+            CraftingComponent.AddRecipe(tableType: typeof(WorkbenchObject), recipe: this);
         }
 
         /// <summary>Hook for mods to customize RecipeFamily before initialization. You can change recipes, xp, labor, time here.</summary>
@@ -115,7 +111,9 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(CustomTextComponent))]
     [RequireComponent(typeof(ModularStockpileComponent))]
-    [RequireComponent(typeof(MinimapComponent))]           
+    [RequireComponent(typeof(MinimapComponent))]
+    [RequireComponent(typeof(PartsComponent))]
+    [RepairRequiresSkill(typeof(BasicEngineeringSkill), 1)]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "WoodShopCart Item")]
     public partial class WoodShopCartObject : PhysicsWorldObject, IRepresentsItem
     {
@@ -131,6 +129,7 @@ namespace Eco.Mods.TechTree
         private WoodShopCartObject() { }
         protected override void Initialize()
         {
+            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.ModsPreInitialize();
             base.Initialize();         
             this.GetComponent<CustomTextComponent>().Initialize(200);
@@ -139,14 +138,16 @@ namespace Eco.Mods.TechTree
             this.GetComponent<PublicStorageComponent>().Initialize(12, 2100000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
+            this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
-            this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
             this.ModsPostInitialize();
-        }
-        void ChangeSpeed()
-        {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
+            {
+                this.GetComponent<PartsComponent>().Config(() => LocString.Empty, new PartInfo[]
+                {
+                                        new() { TypeName = nameof(IronWheelItem), Quantity = 2},
+                                        new() { TypeName = nameof(LubricantItem), Quantity = 1},
+                });
+            }
         }
 
         /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>

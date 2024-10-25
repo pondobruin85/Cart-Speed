@@ -17,10 +17,13 @@ using System.Runtime.CompilerServices;
 using CartSpeed;
 using Eco.Gameplay.Components;
 using Eco.Gameplay.Items;
+using Eco.Gameplay.Objects;
 using Eco.Gameplay.Players;
 using Eco.ModKit.Internal;
 using Eco.Mods.TechTree;
 using Eco.Shared.Gameplay;
+using Eco.Shared.Localization;
+using Eco.Shared.Logging;
 using Eco.World.Blocks;
 using User = Eco.Gameplay.Players.User;
 
@@ -43,10 +46,10 @@ namespace CartSpeed
             switch (playerShoes)
             {
                 case null:                      return 4;                     //barefoot
-                case GardenBootsItem:           return 9;
-                case TallBootsItem:             return 9;
-                case SandalsItem:               return 9;
-                case LowTopShoesItem:           return 9;
+                case GardenBootsItem:           return 8;
+                case TallBootsItem:             return 8;
+                case SandalsItem:               return 8;
+                case LowTopShoesItem:           return 8;
                 case RunningShoesItem:          return 13;
                 case WorkBootsItem:             return 13;
                 case BuilderBootsItem:          return 17;       //top tier
@@ -59,18 +62,34 @@ namespace CartSpeed
                 default:                        return 4;
             }
         }
-        public static void ChangeCartSpeed(VehicleComponent vehicle, float baseCartSpeed)
+ /*       public static void ChangeCartSpeed(VehicleComponent vehicle, float baseCartSpeed)
         {
             User user = vehicle.Parent.GetComponent<MountComponent>().Driver.User;
             float newSpeed = GetCartSpeedMultiplier(user) * baseCartSpeed;
+    //      Log.WriteLine(Localizer.DoStr("ChangeCartSpeed, MaxSpeed = " + vehicle.MaxSpeed + " , " + user));
             if (vehicle.MaxSpeed != newSpeed)
             {
                 MountComponent mount = vehicle.Parent.GetComponent<MountComponent>();
                 Player driver = mount.Driver;
-
                 vehicle.Initialize(newSpeed, 1, 1);
                 mount.Driver = driver;
+    //          Log.WriteLine(Localizer.DoStr("If statement run, MaxSpeed = " + vehicle.MaxSpeed + " , " + user));
             }
+        }  
+        
+        */
+
+        public static float SetCartSpeed (User user, string vehicle)
+        {
+            switch (vehicle)
+            {
+                case "WheelbarrowObject": return GetCartSpeedMultiplier(user)        * 2f;
+                case "SmallWoodCartObject": return GetCartSpeedMultiplier(user)      * 1.5f;
+                case "WoodCartObject": return GetCartSpeedMultiplier(user)           * 1.0f;
+                case "WoodShopCartObject": return GetCartSpeedMultiplier(user)       * 1.0f;
+                case "HandPlowObject": return GetCartSpeedMultiplier(user)           * 1.0f;
+            }
+            return 1.0f;
         }
     }
 }

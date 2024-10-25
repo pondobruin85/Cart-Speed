@@ -7,18 +7,24 @@ namespace Eco.Mods.TechTree
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using Eco.Core.Controller;
     using Eco.Core.Items;
+    using Eco.Core.Utils;
     using Eco.Gameplay.Components;
     using Eco.Gameplay.Components.Auth;
+    using Eco.Gameplay.Components.Storage;
     using Eco.Gameplay.Components.VehicleModules;
     using Eco.Gameplay.GameActions;
     using Eco.Gameplay.DynamicValues;
     using Eco.Gameplay.Interactions;
     using Eco.Gameplay.Items;
-    using Eco.Gameplay.Objects;
-    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Items.Recipes;
     using Eco.Gameplay.Players;
     using Eco.Gameplay.Skills;
+    using Eco.Gameplay.Objects;
+    using Eco.Gameplay.Occupancy;
+    using Eco.Gameplay.Systems.Exhaustion;
+    using Eco.Gameplay.Systems.NewTooltip;
     using Eco.Gameplay.Systems.TextLinks;
     using Eco.Shared.Math;
     using Eco.Shared.Networking;
@@ -26,12 +32,6 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using Eco.Gameplay.Systems.NewTooltip;
-    using Eco.Core.Controller;
-	using Eco.Gameplay.Components.Storage;
-    using Eco.Core.Utils;
-    using Eco.Gameplay.Items.Recipes;
-    using Eco.Gameplay.Systems.Exhaustion;
     using CartSpeed;
 
     [Serialized]
@@ -68,8 +68,8 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("HewnLog", 4, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
-                    new IngredientElement("WoodBoard", 8, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
+                    new IngredientElement("HewnLog", 3, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
+                    new IngredientElement("WoodBoard", 6, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
                     new IngredientElement(typeof(WoodenWheelItem), 2, true),
                 },
 
@@ -113,6 +113,7 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(MovableLinkComponent))]
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(CustomTextComponent))]
+    [RequireComponent(typeof(ModularStockpileComponent))]
     [RequireComponent(typeof(MinimapComponent))]           
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "SmallWoodCart Item")]
     public partial class SmallWoodCartObject : PhysicsWorldObject, IRepresentsItem
@@ -129,23 +130,20 @@ namespace Eco.Mods.TechTree
         private SmallWoodCartObject() { }
         protected override void Initialize()
         {
+            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.ModsPreInitialize();
             base.Initialize();         
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(1);
+            this.GetComponent<StockpileComponent>().Initialize(new Vector3i(2,1,2));
             this.GetComponent<PublicStorageComponent>().Initialize(6, 1400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(6, 1, 1);
+            this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
-            this.GetComponent<MountComponent>().PlayerMountedEvent += ChangeSpeed;
             this.ModsPostInitialize();
         }
-        void ChangeSpeed()
-        {
-            CartSpeed.ChangeCartSpeed(this.GetComponent<VehicleComponent>(), baseCartSpeed: 1.0f);
-        }
-
+        
         /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>
         partial void ModsPreInitialize();
         /// <summary>Hook for mods to customize after initialization.</summary>

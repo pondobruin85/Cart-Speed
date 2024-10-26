@@ -70,7 +70,7 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(IronBarItem), 2, typeof(BasicEngineeringSkill)),
+                    new IngredientElement(typeof(IronPlateItem), 2, typeof(BasicEngineeringSkill)),
                     new IngredientElement("WoodBoard", 5, typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement(typeof(IronWheelItem), 2, true),
                     new IngredientElement(typeof(LubricantItem), 1, true),
@@ -143,7 +143,8 @@ namespace Eco.Mods.TechTree
             {
                 this.GetComponent<PartsComponent>().Config(() => LocString.Empty, new PartInfo[]
                 {
-                                        new() { TypeName = nameof(IronWheelItem), Quantity = 2},
+                                        new() { TypeName = nameof(IronPlateItem), Quantity = 1},
+                                        new() { TypeName = nameof(IronWheelItem), Quantity = 1},
                                         new() { TypeName = nameof(LubricantItem), Quantity = 1},
                 });
             }            

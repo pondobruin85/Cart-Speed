@@ -32,6 +32,7 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
+    using static Eco.Gameplay.Components.PartsComponent;
     using CartSpeed;
 
     [Serialized]
@@ -68,8 +69,7 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("HewnLog", 3, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
-                    new IngredientElement("WoodBoard", 6, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
+                    new IngredientElement("WoodBoard", 4, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
                     new IngredientElement(typeof(WoodenWheelItem), 2, true),
                 },
 
@@ -114,7 +114,8 @@ namespace Eco.Mods.TechTree
     [RequireComponent(typeof(VehicleComponent))]
     [RequireComponent(typeof(CustomTextComponent))]
     [RequireComponent(typeof(ModularStockpileComponent))]
-    [RequireComponent(typeof(MinimapComponent))]           
+    [RequireComponent(typeof(MinimapComponent))]
+    [RequireComponent(typeof(PartsComponent))]
     [Ecopedia("Crafted Objects", "Vehicles", subPageName: "SmallWoodCart Item")]
     public partial class SmallWoodCartObject : PhysicsWorldObject, IRepresentsItem
     {
@@ -142,6 +143,13 @@ namespace Eco.Mods.TechTree
             this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.ModsPostInitialize();
+            {
+                this.GetComponent<PartsComponent>().Config(() => LocString.Empty, new PartInfo[]
+                {
+                    new() { TypeName = nameof(WoodenWheelItem), Quantity = 2},
+                    new() { TypeName = nameof(LubricantItem), Quantity = 1},
+                });
+            }
         }
         
         /// <summary>Hook for mods to customize before initialization. You can change housing values here.</summary>

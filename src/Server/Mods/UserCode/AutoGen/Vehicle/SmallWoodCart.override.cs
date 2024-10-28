@@ -146,8 +146,7 @@ namespace Eco.Mods.TechTree
             {
                 this.GetComponent<PartsComponent>().Config(() => LocString.Empty, new PartInfo[]
                 {
-                    new() { TypeName = nameof(WoodenWheelItem), Quantity = 2},
-                    new() { TypeName = nameof(LubricantItem), Quantity = 1},
+                    new() { TypeName = nameof(WoodenWheelItem), Quantity = 1},
                 });
             }
         }

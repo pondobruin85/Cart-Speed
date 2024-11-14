@@ -33,7 +33,7 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
     using static Eco.Gameplay.Components.PartsComponent;
-    using CartSpeed;
+    using CartSpeedMod;
 
     [Serialized]
     [LocDisplayName("Hand Plow")]

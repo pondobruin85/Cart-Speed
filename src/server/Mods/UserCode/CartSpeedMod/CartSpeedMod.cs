@@ -14,7 +14,8 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Runtime.CompilerServices;
-using CartSpeed;
+using CartSpeedMod;
+using Eco.Core.Plugins.Interfaces;
 using Eco.Gameplay.Components;
 using Eco.Gameplay.Items;
 using Eco.Gameplay.Objects;
@@ -27,8 +28,18 @@ using Eco.Shared.Logging;
 using Eco.World.Blocks;
 using User = Eco.Gameplay.Players.User;
 
-namespace CartSpeed
+namespace CartSpeedMod
 {
+    public class CartSpeedMod : IModInit
+    {
+        public static ModRegistration Register() => new()
+        {
+            ModName = "CartSpeed",
+            ModDescription = "Changes human powered carts' speed to be based on the deployer's footwear.",
+            ModDisplayName = "Cart Speed Mod",
+        };
+    }
+
     public static partial class CartSpeed
     {
         static float GetCartSpeedMultiplier(User user)
@@ -43,6 +54,7 @@ namespace CartSpeed
                     break;
                 }
             }
+
             switch (playerShoes)
             {
                 case null:                      return 4;                     //barefoot
@@ -62,22 +74,6 @@ namespace CartSpeed
                 default:                        return 4;
             }
         }
- /*       public static void ChangeCartSpeed(VehicleComponent vehicle, float baseCartSpeed)
-        {
-            User user = vehicle.Parent.GetComponent<MountComponent>().Driver.User;
-            float newSpeed = GetCartSpeedMultiplier(user) * baseCartSpeed;
-    //      Log.WriteLine(Localizer.DoStr("ChangeCartSpeed, MaxSpeed = " + vehicle.MaxSpeed + " , " + user));
-            if (vehicle.MaxSpeed != newSpeed)
-            {
-                MountComponent mount = vehicle.Parent.GetComponent<MountComponent>();
-                Player driver = mount.Driver;
-                vehicle.Initialize(newSpeed, 1, 1);
-                mount.Driver = driver;
-    //          Log.WriteLine(Localizer.DoStr("If statement run, MaxSpeed = " + vehicle.MaxSpeed + " , " + user));
-            }
-        }  
-        
-        */
 
         public static float SetCartSpeed (User user, string vehicle)
         {

@@ -32,7 +32,7 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using CartSpeed;
+    using CartSpeedMod;
     using Eco.Shared.Logging;
     using Eco.ModKit.Internal;
 

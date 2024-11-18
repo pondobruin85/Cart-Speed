@@ -33,7 +33,6 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
     using static Eco.Gameplay.Components.PartsComponent;
-    using CartSpeedMod;
 
     [Serialized]
     [LocDisplayName("Hand Plow")]
@@ -130,14 +129,13 @@ namespace Eco.Mods.TechTree
 
         private HandPlowObject() { }
         protected override void Initialize()
-        {
-            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
+        {            
             this.ModsPreInitialize();
             base.Initialize();
             this.GetComponent<VehicleComponent>().HumanPowered(1.5f);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(maxSpeed, 1,1);
+            this.GetComponent<VehicleComponent>().Initialize(10, 1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.ModsPostInitialize();
             {

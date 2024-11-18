@@ -33,7 +33,6 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
     using static Eco.Gameplay.Components.PartsComponent;
-    using CartSpeedMod;
 
     [Serialized]
     [LocDisplayName("Wood Cart")]
@@ -136,14 +135,13 @@ namespace Eco.Mods.TechTree
         {
             this.ModsPreInitialize();
             base.Initialize();
-            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(2);
             this.GetComponent<StockpileComponent>().Initialize(new Vector3i(2,2,3));
             this.GetComponent<PublicStorageComponent>().Initialize(12, 2100000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
+            this.GetComponent<VehicleComponent>().Initialize(12,1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.ModsPostInitialize();
             {

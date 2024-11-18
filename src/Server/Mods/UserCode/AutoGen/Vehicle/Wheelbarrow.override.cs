@@ -32,9 +32,6 @@ namespace Eco.Mods.TechTree
     using Eco.Shared.Serialization;
     using Eco.Shared.Utils;
     using Eco.Shared.Items;
-    using CartSpeedMod;
-    using Eco.Shared.Logging;
-    using Eco.ModKit.Internal;
 
     [Serialized]
     [LocDisplayName("Wheelbarrow")]
@@ -69,9 +66,8 @@ namespace Eco.Mods.TechTree
                // type of the item, the amount of the item, the skill required, and the talent used.
                ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement(typeof(MortarItem), 3,typeof(Skill)), //noloc
+                    new IngredientElement(typeof(AdobeItem), 2,typeof(Skill)), //noloc
                     new IngredientElement("Wood", 5,typeof(Skill)), //noloc
-                    new IngredientElement("Rock", 5,typeof(Skill)), //noloc
                     new IngredientElement(typeof(PlantFibersItem), 10,typeof(Skill)),
                 },
 
@@ -131,7 +127,6 @@ namespace Eco.Mods.TechTree
         private WheelbarrowObject() { }
         protected override void Initialize()
         {
-            float maxSpeed = CartSpeed.SetCartSpeed(this.Creator, this.GetType().Name);
             this.ModsPreInitialize();
             base.Initialize();
             this.GetComponent<CustomTextComponent>().Initialize(200);
@@ -140,7 +135,7 @@ namespace Eco.Mods.TechTree
             this.GetComponent<PublicStorageComponent>().Initialize(3, 400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(maxSpeed,1,1);
+            this.GetComponent<VehicleComponent>().Initialize(10,1,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");   
             this.ModsPostInitialize();    
         }

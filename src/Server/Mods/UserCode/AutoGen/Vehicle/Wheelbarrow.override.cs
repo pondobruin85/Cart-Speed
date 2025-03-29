@@ -132,7 +132,7 @@ namespace Eco.Mods.TechTree
             this.GetComponent<CustomTextComponent>().Initialize(200);
             this.GetComponent<VehicleComponent>().HumanPowered(1);
             this.GetComponent<StockpileComponent>().Initialize(new Vector3i(1,1,1));
-            this.GetComponent<PublicStorageComponent>().Initialize(3, 400000);
+            this.GetComponent<PublicStorageComponent>().Initialize(4, 800000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
             this.GetComponent<VehicleComponent>().Initialize(10,1,1);

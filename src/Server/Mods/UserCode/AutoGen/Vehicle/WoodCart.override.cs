@@ -142,7 +142,7 @@ namespace Eco.Mods.TechTree
             this.GetComponent<PublicStorageComponent>().Initialize(12, 2400000);
             this.GetComponent<MinimapComponent>().InitAsMovable();
             this.GetComponent<MinimapComponent>().SetCategory(Localizer.DoStr("Vehicles"));
-            this.GetComponent<VehicleComponent>().Initialize(12,1,1);
+            this.GetComponent<VehicleComponent>().Initialize(6,.5f,1);
             this.GetComponent<VehicleComponent>().FailDriveMsg = Localizer.Do($"You are too hungry to pull this {this.DisplayName}!");
             this.ModsPostInitialize();
             {

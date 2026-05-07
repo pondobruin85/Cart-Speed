@@ -68,13 +68,12 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("HewnLog", 10, typeof(BasicEngineeringSkill), typeof(BasicEngineeringLavishResourcesTalent)), //noloc
-                    new IngredientElement("WoodBoard", 15, typeof(BasicEngineeringSkill), typeof(BasicEngineeringLavishResourcesTalent)), //noloc
-                    new IngredientElement(typeof(LeatherHideItem), 4, typeof(BasicEngineeringSkill), typeof(BasicEngineeringLavishResourcesTalent)), //noloc
+                    new IngredientElement("HewnLog", 10,typeof(BasicEngineeringSkill)), //noloc
+                    new IngredientElement("WoodBoard", 15,typeof(BasicEngineeringSkill)), //noloc
+                    new IngredientElement(typeof(LeatherHideItem), 4,typeof(BasicEngineeringSkill)), //noloc
                     new IngredientElement(typeof(IronWheelItem), 2, true),
                     new IngredientElement(typeof(LubricantItem), 1, true),
                 },
-
                 // Define our recipe output items.
                 // For every output item there needs to be one CraftingElement entry with the type of the final item and the amount
                 // to create.
@@ -86,7 +85,8 @@ namespace Eco.Mods.TechTree
             this.ExperienceOnCraft = 10; // Defines how much experience is gained when crafted.
             
             // Defines the amount of labor required and the required skill to add labor
-            this.LaborInCalories = CreateLaborInCaloriesValue(150, typeof(BasicEngineeringSkill));
+            this.LaborInCalories = CreateLaborInCaloriesValue(150,typeof(BasicEngineeringSkill));
+
 
             // Defines our crafting time for the recipe
             this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(WoodCartRecipe), start: 2, skillType: typeof(BasicEngineeringSkill));

@@ -70,7 +70,6 @@ namespace Eco.Mods.TechTree
                     new IngredientElement(typeof(WoodCartItem), 1, true),
                     new IngredientElement(typeof(StoreItem), 1, true),                   
                 },
-
                 // Define our recipe output items.
                 // For every output item there needs to be one CraftingElement entry with the type of the final item and the amount
                 // to create.

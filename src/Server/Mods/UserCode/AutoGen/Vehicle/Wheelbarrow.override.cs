@@ -70,7 +70,6 @@ namespace Eco.Mods.TechTree
                     new IngredientElement("Wood", 5,typeof(Skill)), //noloc
                     new IngredientElement(typeof(PlantFibersItem), 10,typeof(Skill)),
                 },
-
                 // Define our recipe output items.
                 // For every output item there needs to be one CraftingElement entry with the type of the final item and the amount
                 // to create.
@@ -82,6 +81,7 @@ namespace Eco.Mods.TechTree
             
             // Defines the amount of labor required and the required skill to add labor
             this.LaborInCalories = CreateLaborInCaloriesValue(75);
+
 
             // Defines our crafting time for the recipe
             this.CraftMinutes = CreateCraftTimeValue(2);

@@ -68,10 +68,9 @@ namespace Eco.Mods.TechTree
                 // type of the item, the amount of the item, the skill required, and the talent used.
                 ingredients: new List<IngredientElement>
                 {
-                    new IngredientElement("WoodBoard", 4, typeof(CarpentrySkill), typeof(CarpentryLavishResourcesTalent)), //noloc
+                    new IngredientElement("WoodBoard", 4,typeof(CarpentrySkill)), //noloc
                     new IngredientElement(typeof(WoodenWheelItem), 2, true),
                 },
-
                 // Define our recipe output items.
                 // For every output item there needs to be one CraftingElement entry with the type of the final item and the amount
                 // to create.
@@ -83,7 +82,8 @@ namespace Eco.Mods.TechTree
             this.ExperienceOnCraft = 3; // Defines how much experience is gained when crafted.
             
             // Defines the amount of labor required and the required skill to add labor
-            this.LaborInCalories = CreateLaborInCaloriesValue(50, typeof(CarpentrySkill));
+            this.LaborInCalories = CreateLaborInCaloriesValue(50,typeof(CarpentrySkill));
+
 
             // Defines our crafting time for the recipe
             this.CraftMinutes = CreateCraftTimeValue(beneficiary: typeof(SmallWoodCartRecipe), start: 2, skillType: typeof(CarpentrySkill));
